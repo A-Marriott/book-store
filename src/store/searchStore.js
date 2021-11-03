@@ -1,14 +1,18 @@
+import { fetchBooks } from "./service";
+
 export const search = {
-  state: 0,
+  state: {
+    results: [],
+  },
   reducers: {
-    increment(state, payload) {
-      return state + payload;
+    update(state, payload) {
+      return { results: payload };
     },
   },
   effects: (dispatch) => ({
-    async incrementAsync(payload, rootState) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      dispatch.count.increment(payload);
+    async fetchBooks(payload) {
+      const response = await fetchBooks(payload);
+      dispatch.search.update(response.items);
     },
   }),
 };
