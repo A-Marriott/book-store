@@ -30,6 +30,7 @@ const Search = ({noResults, books, search}) => {
                         return (
                             <Link to={`/book/${book.id}`} key={book.id}>
                                 <p>{book.volumeInfo.title}</p>
+                                <p>{book.saleInfo.retailPrice.amount} {book.saleInfo.retailPrice.currencyCode}</p>
                             </Link>
                         )
                     })}
