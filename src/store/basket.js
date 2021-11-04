@@ -4,11 +4,11 @@ export const basket = {
         books: [],
     },
     reducers: {
-        addBooks(state, payload) {
+        addBook(state, payload) {
             return {
                 ...state,
                 books: [...state.books, payload],
             };
         },
     },
-};
+}

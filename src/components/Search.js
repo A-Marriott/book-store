@@ -1,9 +1,6 @@
 import React, {useState} from "react";
 import {connect} from "react-redux";
-import {
-    Link,
-    useParams
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Search = ({noResults, books, search}) => {
     const [query, setQuery] = useState("");
