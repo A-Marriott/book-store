@@ -1,4 +1,4 @@
 import { search } from "./searchStore";
-// import { book } from "./book";
+import { basket } from "./basket";
 
-export { search };
+export { search, basket };

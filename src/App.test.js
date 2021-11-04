@@ -80,7 +80,7 @@ describe("App starts", () => {
             });
         })
     })
-    describe("Redirect to book details page when click book", () => {
+    describe("Redirect to basket details page when click basket", () => {
         beforeEach(() => {
             store = init({
                 models: {
@@ -113,7 +113,7 @@ describe("App starts", () => {
         it("Given I search for a query then it should see results", async () => {
             const link = await findByText(/Hunger Games/i);
             await fireEvent.click(link)
-            expect(window.location.pathname).toBe('/book/E_3rDwAAQBAJ');
+            expect(window.location.pathname).toBe('/basket/E_3rDwAAQBAJ');
         })
     })
 })

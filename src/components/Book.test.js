@@ -29,7 +29,7 @@ describe("Book details page", () => {
         expect(fetchBook).toHaveBeenCalledWith("E_3rDwAAQBAJ");
     })
 
-    it("should display book title", async () => {
+    it("should display basket title", async () => {
         const {findByText} = render(<Book/>);
         const title = await findByText("Title: Harry Potter");
         expect(title).toBeVisible();

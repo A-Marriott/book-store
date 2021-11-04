@@ -42,6 +42,5 @@ describe("Book store models", () => {
                 noResults: false,
             });
         });
-
     });
 });
