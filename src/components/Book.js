@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 // import {connect} from "react-redux";
-import { useParams } from "react-router-dom";
-import { fetchBook } from "../store/service";
+import {useParams} from "react-router-dom";
+import {fetchBook} from "../store/service";
 
 const Book = () => {
-    let { id } = useParams();
+    let {id} = useParams();
 
     const [book, setBook] = useState({});
 
@@ -13,11 +13,14 @@ const Book = () => {
         setBook(selectedBook)
     }, [id])
 
+    const {volumeInfo: {title: name, description} = {}, saleInfo: {retailPrice: {amount, currencyCode} = {}} = {}} = book
 
     return (
         <div>
             Book details
-            <h1>{book?.id}</h1>
+            <p>Title: {name}</p>
+            <p>Price: {amount} {currencyCode}</p>
+            <p>Description: {description}</p>
         </div>
     );
 };
