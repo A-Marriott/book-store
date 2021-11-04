@@ -1,42 +1,64 @@
-import React, {useEffect, useState} from "react";
-// import {connect} from "react-redux";
-import {useParams} from "react-router-dom";
-import {fetchBook} from "../store/service";
-import {connect} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { connect } from "react-redux";
 
-const Book = ({ addBook }) => {
-    let {id} = useParams();
-    const [book, setBook] = useState({});
+const Book = ({
+  addBook,
+  addBookSuccess,
+  calculateTotal,
+  fetchBook,
+  book,
+  totalPrice,
+}) => {
+  let { id } = useParams();
 
-    useEffect(async () => {
-        const selectedBook = await fetchBook(id)
-        setBook(selectedBook)
-    }, [id])
+  useEffect(() => {
+    fetchBook({ id });
+  }, [id]);
 
-    const {
-        volumeInfo: {title: name, description} = {},
-        saleInfo: {retailPrice: {amount, currencyCode} = {}} = {}
-    } = book
+  const {
+    volumeInfo: { title: name, description } = {},
+    saleInfo: { retailPrice: { amount, currencyCode } = {} } = {},
+  } = book;
 
-    return (
-        <div>
-            Book details
-            <p>Title: {name}</p>
-            <p>Price: {amount} {currencyCode}</p>
-            <p>Description: {description}</p>
-            <button
-                onClick={() => {
-                    addBook(book)
-                }}
-            >
-                Add to basket
-            </button>
-        </div>
-    );
+  return (
+    <div>
+      Book details
+      <p>Title: {name}</p>
+      <p>
+        Price: {amount} {currencyCode}
+      </p>
+      <p>Description: {description}</p>
+      <button
+        onClick={() => {
+          addBook(book);
+        }}
+        data-testid="add-book-button"
+      >
+        Add to basket
+      </button>
+      <button
+        onClick={() => {
+          addBookSuccess(book);
+        }}
+      >
+        Add book success
+      </button>
+      <h6>{totalPrice}</h6>
+    </div>
+  );
 };
 
-const mapDispatch = (dispatch) => ({
-    addBook: (book) => dispatch.basket.addBook(book),
+const mapState = (state) => ({
+  book: state.search.book,
+  totalPrice: state.basket.totalPrice,
 });
 
-export default connect(null, mapDispatch)(Book);
+const mapDispatch = (dispatch) => ({
+  addBook: dispatch.basket.addBook,
+  calculateTotal: dispatch.basket.calculateTotal,
+  fetchBook: dispatch.search.fetchBook,
+  addBookSuccess: dispatch.basket.addBookSuccess,
+});
+
+export default connect(mapState, mapDispatch)(Book);
