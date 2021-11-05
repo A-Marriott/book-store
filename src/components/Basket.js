@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
-const Basket = ({ books, totalPrice, removeBook }) => {
+const Basket = ({ books, totalPrice, removeBook, applyDiscount }) => {
+  useEffect(() => {
+    applyDiscount();
+  }, [applyDiscount]);
+
   return (
     <div>
       <h1>Total price: {totalPrice}</h1>
@@ -39,6 +43,7 @@ const mapState = (state) => ({
 
 const mapDispatch = (dispatch) => ({
   removeBook: dispatch.basket.removeBook,
+  applyDiscount: dispatch.basket.applyDiscount,
 });
 
 export default connect(mapState, mapDispatch)(Basket);
