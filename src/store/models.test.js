@@ -28,6 +28,7 @@ describe("Models tests", () => {
         expect(store.getState().search).toEqual({
           results: [],
           noResults: true,
+          book: {},
         });
       });
 
@@ -39,6 +40,7 @@ describe("Models tests", () => {
         expect(store.getState().search).toEqual({
           results: ["Harry Potter", "Hunger Games"],
           noResults: false,
+          book: {},
         });
       });
 
@@ -63,39 +65,14 @@ describe("Models tests", () => {
       });
     });
 
-    it("The store update when book is added to baasket", async () => {
+    it("The book and total price update when book is added to basket", async () => {
       const book = {
         volumeInfo: { title: "Harry Potter", description: "TESTTESTTEST" },
         saleInfo: { retailPrice: { amount: 2.99, currencyCode: "GBP" } },
       };
       await store.dispatch.basket.addBook(book);
       expect(store.getState().basket.books).toEqual([book]);
-    });
-
-    it("calculatePrice calculates the total price of every book", async () => {
-      store = init({
-        models: {
-          basket: {
-            ...basket,
-            state: {
-              books: [
-                {
-                  saleInfo: {
-                    retailPrice: { amount: 2.99, currencyCode: "GBP" },
-                  },
-                },
-                {
-                  saleInfo: {
-                    retailPrice: { amount: 3.01, currencyCode: "GBP" },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      });
-      await store.dispatch.basket.calculateTotal();
-      expect(store.getState().basket.totalPrice).toEqual(6);
+      expect(store.getState().basket.totalPrice).toEqual(2.99)
     });
   });
 });

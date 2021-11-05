@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { connect } from "react-redux";
 
 const Book = ({
   addBook,
-  addBookSuccess,
-  calculateTotal,
   fetchBook,
   book,
   totalPrice,
 }) => {
-  let { id } = useParams();
 
+  let { id } = useParams();
   useEffect(() => {
     fetchBook({ id });
   }, [id]);
@@ -37,13 +35,6 @@ const Book = ({
       >
         Add to basket
       </button>
-      <button
-        onClick={() => {
-          addBookSuccess(book);
-        }}
-      >
-        Add book success
-      </button>
       <h6>{totalPrice}</h6>
     </div>
   );
@@ -56,9 +47,7 @@ const mapState = (state) => ({
 
 const mapDispatch = (dispatch) => ({
   addBook: dispatch.basket.addBook,
-  calculateTotal: dispatch.basket.calculateTotal,
   fetchBook: dispatch.search.fetchBook,
-  addBookSuccess: dispatch.basket.addBookSuccess,
 });
 
 export default connect(mapState, mapDispatch)(Book);

@@ -1,3 +1,12 @@
+const calculateTotal = (books) => {
+  const bookPrices = books.map((book) => {
+    return book.saleInfo.retailPrice.amount;
+  });
+  return bookPrices.reduce(
+      (previousValue, currentValue) => previousValue + currentValue
+  );
+};
+
 export const basket = {
   state: {
     totalPrice: 0,
@@ -8,25 +17,8 @@ export const basket = {
       return {
         ...state,
         books: [...state.books, payload],
-      };
-    },
-    calculateTotal(state, payload) {
-      const bookPrices = state.books.map((book) => {
-        return book.saleInfo.retailPrice.amount;
-      });
-      const total = bookPrices.reduce(
-        (previousValue, currentValue) => previousValue + currentValue
-      );
-      return {
-        ...state,
-        totalPrice: total,
+        totalPrice: calculateTotal([...state.books, payload]),
       };
     },
   },
-  effects: (dispatch) => ({
-    addBookSuccess(payload) {
-      dispatch.basket.addBook(payload);
-      dispatch.basket.calculateTotal();
-    },
-  }),
 };

@@ -15,12 +15,14 @@ export const search = {
     },
     update(state, payload) {
       return {
+        ...state,
         results: payload,
         noResults: false,
       };
     },
     noSearchResults(state, payload) {
       return {
+        ...state,
         results: [],
         noResults: true,
       };

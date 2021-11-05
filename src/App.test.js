@@ -95,9 +95,15 @@ describe("App starts", () => {
                                     saleInfo: {retailPrice: {amount: 3.08, currencyCode: "GBP"}},
                                 },],
                             noResults: false,
+                            book: {},
                         },
-                        effects: {fetchBooks: jest.fn()},
+                        effects: {fetchBooks: jest.fn(), fetchBook: jest.fn()},
                     },
+                    basket: {
+                        state: {
+                            totalPrice: 0,
+                        },
+                    }
                 },
             });
             const results = render(
@@ -113,7 +119,7 @@ describe("App starts", () => {
         it("Given I search for a query then it should see results", async () => {
             const link = await findByText(/Hunger Games/i);
             await fireEvent.click(link)
-            expect(window.location.pathname).toBe('/basket/E_3rDwAAQBAJ');
+            expect(window.location.pathname).toBe('/book/E_3rDwAAQBAJ');
         })
     })
 })
