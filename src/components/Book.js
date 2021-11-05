@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import { connect } from "react-redux";
 
 const Book = ({
@@ -21,6 +21,7 @@ const Book = ({
 
   return (
     <div>
+        <Link to={'/basket'}>BASKET</Link>
       Book details
       <p>Title: {name}</p>
       <p>

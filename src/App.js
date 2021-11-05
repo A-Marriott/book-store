@@ -1,20 +1,19 @@
 import "./App.css";
+import {Switch, Route} from "react-router-dom";
 import Search from "./components/Search";
 import Book from "./components/Book";
-import { Switch, Route } from "react-router-dom";
+import Basket from "./components/Basket";
 
 function App() {
-  return (
-    <div className="App">
-      <Switch>
-        <Route exact path="/" component={Search} />
-        <Route path="/book/:id" component={Book} />
-      </Switch>
-    </div>
-  );
+    return (
+        <div className="App">
+            <Switch>
+                <Route exact path="/" component={Search}/>
+                <Route path="/book/:id" component={Book}/>
+                <Route path="/basket" component={Basket}/>
+            </Switch>
+        </div>
+    );
 }
 
 export default App;
-
-// Change tests/remove imports given that we have combined calc total and add books
-// And make test for this new effect??

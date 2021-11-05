@@ -6,6 +6,7 @@ const Search = ({noResults, books, search}) => {
     const [query, setQuery] = useState("");
     return (
         <div>
+            <Link to={'/basket'}>BASKET</Link>
             <h1>Search page</h1>
 
             <form

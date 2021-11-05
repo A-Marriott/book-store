@@ -7,6 +7,11 @@ const calculateTotal = (books) => {
   );
 };
 
+const removeBookFromBasket = (books, book) => {
+  const index = books.indexOf(book);
+  return books.splice(index, 1);
+};
+
 export const basket = {
   state: {
     totalPrice: 0,
@@ -20,5 +25,12 @@ export const basket = {
         totalPrice: calculateTotal([...state.books, payload]),
       };
     },
+    removeBook(state, payload) {
+      return {
+        ...state,
+        books: removeBookFromBasket(state.books, payload),
+        totalPrice: removeBookFromBasket(state.books, payload),
+      }
+    }
   },
 };
