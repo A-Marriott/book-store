@@ -45,19 +45,40 @@ const calculateDiscountedPrice = (total, books, voucher, date) => {
   }
 };
 
+const expiredVoucher = (voucher) => {
+  const date = new Date();
+  if (voucher === "APRIL2021" && date.getMonth() !== 3) {
+    return true;
+  }
+  return false;
+};
+
+const invalidVoucher = (voucher) => {
+  if (voucher !== "APRIL2021") {
+    return true;
+  }
+  return false;
+};
+
 export const basket = {
   state: {
     totalPrice: 0,
     discountedPrice: 0,
     books: [],
     voucherCode: "",
+    expired: false,
+    invalidCode: false,
   },
   reducers: {
     addVoucherCode(state, payload) {
+      const isExpired = expiredVoucher(payload);
+      const isInvalid = invalidVoucher(payload);
       return {
         ...state,
         voucherCode: payload,
         discountedPrice: calculateDiscountedTotal(state.books, payload),
+        expired: isExpired,
+        invalidCode: isInvalid,
       };
     },
     addBook(state, payload) {

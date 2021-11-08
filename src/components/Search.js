@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-const Search = ({ noResults, books, search, addBook }) => {
+const Search = ({ noResults, books, search, addBook, recentlyViewedBooks }) => {
   const [query, setQuery] = useState("");
   return (
     <div>
@@ -50,8 +50,10 @@ const Search = ({ noResults, books, search, addBook }) => {
           })}
         </>
       )}
-
-      <button onClick={() => console.log(books)}>log books</button>
+      <h4>Recently viewed books</h4>
+      {recentlyViewedBooks?.map((book) => {
+        return <p key={book.id}>{book.volumeInfo.title}</p>;
+      })}
     </div>
   );
 };
@@ -59,6 +61,7 @@ const Search = ({ noResults, books, search, addBook }) => {
 const mapState = (state) => ({
   books: state.search.results,
   noResults: state.search.noResults,
+  recentlyViewedBooks: state.search.recentlyViewedBooks,
 });
 
 const mapDispatch = (dispatch) => ({

@@ -1,17 +1,14 @@
 import { init } from "@rematch/core";
 import { basket, search } from "./models";
-import { mockComponent } from "react-dom/test-utils";
-
 import { fetchBooks, fetchBook } from "./service";
 import MockDate from "mockdate";
-import { render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { BrowserRouter } from "react-router-dom";
-import Basket from "../components/Basket";
 
 jest.mock("./service");
 
 describe("Models tests", () => {
+  beforeEach(() => {
+    MockDate.reset();
+  });
   describe("Book store models", () => {
     let store;
     describe("Search model", () => {
@@ -30,11 +27,9 @@ describe("Models tests", () => {
           totalItems: 0,
         }));
         await store.dispatch.search.fetchBooks();
-        expect(store.getState().search).toEqual({
-          results: [],
-          noResults: true,
-          book: {},
-        });
+
+        expect(store.getState().search.results).toEqual([]);
+        expect(store.getState().search.noResults).toEqual(true);
       });
 
       it("Fetch books returns 2 results", async () => {
@@ -42,11 +37,11 @@ describe("Models tests", () => {
           items: ["Harry Potter", "Hunger Games"],
         }));
         await store.dispatch.search.fetchBooks();
-        expect(store.getState().search).toEqual({
-          results: ["Harry Potter", "Hunger Games"],
-          noResults: false,
-          book: {},
-        });
+        expect(store.getState().search.results).toEqual([
+          "Harry Potter",
+          "Hunger Games",
+        ]);
+        expect(store.getState().search.noResults).toEqual(false);
       });
 
       it("fetch book updates book", async () => {
@@ -55,6 +50,51 @@ describe("Models tests", () => {
         }));
         await store.dispatch.search.fetchBook({ id: null });
         expect(store.getState().search.book).toEqual({ book: "Harry Potter" });
+      });
+
+      describe("Recently viewed books - when searching a book", () => {
+        beforeEach(() => {
+          store = init({
+            models: {
+              search: {
+                ...search,
+                state: {
+                  recentlyViewedBooks: [
+                    { id: "Harry Potter" },
+                    { id: "Hunger Games" },
+                  ],
+                },
+              },
+            },
+          });
+        });
+
+        it("Adds the book to recentlyViewedBooks", async () => {
+          store.dispatch.search.setBook({ id: "Twilight" });
+          expect(store.getState().search.recentlyViewedBooks).toEqual([
+            { id: "Harry Potter" },
+            { id: "Hunger Games" },
+            { id: "Twilight" },
+          ]);
+        });
+
+        it("Removes the oldest book from recentlyViewedBooks if the array length is over 3", async () => {
+          store.dispatch.search.setBook({ id: "Twilight" });
+          store.dispatch.search.setBook({ id: "Sapiens" });
+          expect(store.getState().search.recentlyViewedBooks).toEqual([
+            { id: "Hunger Games" },
+            { id: "Twilight" },
+            { id: "Sapiens" },
+          ]);
+        });
+
+        it("Does not add the book if the book is already in recentlyViewedBooks", async () => {
+          store.dispatch.search.setBook({ id: "Hunger Games" });
+          expect(store.getState().search.recentlyViewedBooks).toEqual([
+            { id: "Harry Potter" },
+            { id: "Hunger Games" },
+          ]);
+        });
       });
     });
   });
@@ -114,7 +154,6 @@ describe("Models tests", () => {
         volumeInfo: { title: "Harry Potter", description: "TESTTESTTEST" },
         saleInfo: { retailPrice: { amount: 10.0, currencyCode: "GBP" } },
       };
-      MockDate.set("2021-11-05");
       let store;
       beforeEach(async () => {
         store = init({
@@ -125,7 +164,8 @@ describe("Models tests", () => {
           },
         });
       });
-      it("Given I add The Bench to the basket on Fridays then the book should be discounted by 25% ", async () => {
+      it("Given I add The Bench to the basket on Fridays then the book should be discounted by 25%", async () => {
+        MockDate.set("2021-11-05");
         await store.dispatch.basket.addBook(book);
         expect(store.getState().basket.discountedPrice).toEqual(7.5);
       });
@@ -170,7 +210,6 @@ describe("Models tests", () => {
     });
   });
   describe("applying valid discount code", () => {
-    MockDate.set("2021-04-25");
     let store;
     const basketBooks = [
       {
@@ -200,12 +239,12 @@ describe("Models tests", () => {
     });
 
     it("given today's date is 30th April 2021 when I add the voucher code APRIL2021 then the total should be discounted 20%", async () => {
+      MockDate.set("2021-04-25");
       await store.dispatch.basket.addVoucherCode("APRIL2021");
       expect(store.getState().basket.discountedPrice).toEqual(16);
     });
   });
-  describe("applying not valid discount code", () => {
-    MockDate.set("2021-05-25");
+  describe("discount codes", () => {
     let store;
     const basketBooks = [
       {
@@ -234,12 +273,21 @@ describe("Models tests", () => {
       });
     });
 
-    it("given today's date is 1st May 2021 when I add the voucher code APRIL2021 then the total should not be expired and a message voucher code expired should be displayed", async () => {
+    it("applying a valid discount code on an invalid date - should not apply a discount", async () => {
+      MockDate.set("2021-05-25");
       await store.dispatch.basket.addVoucherCode("APRIL2021");
-      const voucherExpiredMessage = await screen.findByText(
-        "Voucher code expired"
-      );
-      expect(voucherExpiredMessage).toBeInTheDocument();
+      expect(store.getState().basket.discountedPrice).toBe(20);
+    });
+
+    it("applying a valid discount code on an invalid date - should set expired to true", async () => {
+      MockDate.set("2021-05-25");
+      await store.dispatch.basket.addVoucherCode("APRIL2021");
+      expect(store.getState().basket.expired).toBe(true);
+    });
+
+    it("applying an invalid discount code - should set invalidCode to true", async () => {
+      await store.dispatch.basket.addVoucherCode("FAIL");
+      expect(store.getState().basket.invalidCode).toBe(true);
     });
   });
 });

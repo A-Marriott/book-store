@@ -103,6 +103,46 @@ describe("App starts", () => {
         expect(mockAddBook).toHaveBeenCalledTimes(1);
       });
     });
+    describe("With recently viewed books", () => {
+      beforeEach(() => {
+        store = init({
+          models: {
+            search: {
+              state: {
+                recentlyViewedBooks: [
+                  {
+                    volumeInfo: { title: "Harry Potter" },
+                    id: "E_3rgsdfg",
+                    saleInfo: {
+                      retailPrice: { amount: 2.99, currencyCode: "GBP" },
+                    },
+                  },
+                ],
+                noResults: true,
+              },
+              effects: { fetchBooks: jest.fn() },
+            },
+            basket: {
+              state: {},
+              effects: { addBook: jest.fn() },
+            },
+          },
+        });
+        const results = render(
+          <Provider store={store}>
+            <BrowserRouter>
+              <Search />
+            </BrowserRouter>
+          </Provider>
+        );
+        findByText = results.findByText;
+      });
+
+      it("Should display recently viewed books", async () => {
+        const book = await findByText(/Harry Potter/i);
+        expect(book).toBeInTheDocument();
+      });
+    });
   });
   describe("Redirect to basket details page when click basket", () => {
     beforeEach(() => {

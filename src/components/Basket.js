@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-const Basket = ({ books, totalPrice, removeBook, addVoucherCode }) => {
+const Basket = ({
+  books,
+  totalPrice,
+  removeBook,
+  addVoucherCode,
+  expired,
+  invalidCode,
+}) => {
   const [voucher, setVoucher] = useState("");
   return (
     <>
@@ -19,8 +26,10 @@ const Basket = ({ books, totalPrice, removeBook, addVoucherCode }) => {
             value={voucher}
             onChange={(input) => setVoucher(input.target.value)}
           />
-          <input type="submit" />
+          <input type="submit" data-testid="submit" />
         </form>
+        {expired && <p>Voucher code expired</p>}
+        {invalidCode && <p>Voucher code invalid</p>}
       </>
       <>
         {books.length === 0 ? (
@@ -61,6 +70,8 @@ const Basket = ({ books, totalPrice, removeBook, addVoucherCode }) => {
 const mapState = (state) => ({
   books: state.basket.books,
   totalPrice: state.basket.totalPrice,
+  expired: state.basket.expired,
+  invalidCode: state.basket.invalidCode,
 });
 
 const mapDispatch = (dispatch) => ({

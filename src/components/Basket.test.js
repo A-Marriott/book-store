@@ -3,10 +3,9 @@ import Basket from "./Basket";
 import { init } from "@rematch/core";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import MockDate from "mockdate";
 
 const mockRemoveBook = jest.fn();
-// const date = MockDate.set(date)
+const mockAddVoucherCode = jest.fn();
 
 describe("Basket page", () => {
   describe("books in basket", () => {
@@ -95,7 +94,6 @@ describe("Basket page", () => {
 
   describe("basket is empty", () => {
     let store;
-    let findByText;
     beforeEach(async () => {
       store = init({
         models: {
@@ -128,38 +126,45 @@ describe("Basket page", () => {
   });
 
   describe("discounts", () => {
-    describe("friday 25% off discount", () => {
-      const date = MockDate.set("2000-11-22");
-      let store;
-      let findByText;
-      beforeEach(async () => {
-        store = init({
-          models: {
-            basket: {
-              state: {
-                books: [],
-                totalPrice: 0,
-              },
-              effects: {},
+    let store;
+    beforeEach(async () => {
+      store = init({
+        models: {
+          basket: {
+            state: {
+              books: [],
+              totalPrice: 0,
+              expired: true,
+              invalidCode: true,
             },
-            search: {
-              state: {},
-              effects: {},
-            },
+            effects: { addVoucherCode: mockAddVoucherCode },
           },
-        });
+          search: {
+            state: {},
+            effects: {},
+          },
+        },
+      });
 
-        render(
-          <Provider store={store}>
-            <BrowserRouter>
-              <Basket />
-            </BrowserRouter>
-          </Provider>
-        );
-      });
-      it("Given I add The Bench to the basket on Fridays then the book should be discounted by 25% ", () => {
-        //
-      });
+      render(
+        <Provider store={store}>
+          <BrowserRouter>
+            <Basket />
+          </BrowserRouter>
+        </Provider>
+      );
+    });
+    it("pressing submit calls addVoucher", async () => {
+      fireEvent.click(screen.getByTestId("submit"));
+      expect(mockAddVoucherCode).toHaveBeenCalledTimes(1);
+    });
+    it("displays a voucher expiration message if you enter a valid code on an invalid date", async () => {
+      const errorMessage = await screen.getByText("Voucher code expired");
+      expect(errorMessage).toBeVisible();
+    });
+    it("displays a voucher invalid message if you enter an invalid code", async () => {
+      const errorMessage = await screen.getByText("Voucher code invalid");
+      expect(errorMessage).toBeVisible();
     });
   });
 });
