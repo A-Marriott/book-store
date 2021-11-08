@@ -25,7 +25,7 @@ const removeBookFromBasket = (books, book) => {
 export const basket = {
   state: {
     totalPrice: 0,
-    discountedPrice: 0,
+    // discountedPrice: 0,
     books: [],
     // discounts: {
     //   threeBooks: false,
@@ -49,20 +49,20 @@ export const basket = {
         totalPrice: calculateTotal(updatedBooks),
       };
     },
-    applyDiscount(state) {
-      const day = new Date();
-      if (day.getDay() === 5) {
-        return {
-          ...state,
-          discountedPrice: state.totalPrice * 0.5,
-        };
-      } else if (state.books.length >= 3) {
-        return {
-          ...state,
-          discountedPrice: state.totalPrice * 0.9,
-        };
-      }
-    },
+    // applyDiscount(state) {
+    //   const day = new Date();
+    //   if (day.getDay() === 5) {
+    //     return {
+    //       ...state,
+    //       discountedPrice: state.totalPrice * 0.5,
+    //     };
+    //   } else if (state.books.length >= 3) {
+    //     return {
+    //       ...state,
+    //       discountedPrice: state.totalPrice * 0.9,
+    //     };
+    //   }
+    // },
     //
     // calculateDiscountedPrice(state, payload) {
     //   if (state.discounts.threeBooks) {
