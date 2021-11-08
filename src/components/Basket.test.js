@@ -3,8 +3,10 @@ import Basket from "./Basket";
 import { init } from "@rematch/core";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import MockDate from "mockdate";
 
 const mockRemoveBook = jest.fn();
+// const date = MockDate.set(date)
 
 describe("Basket page", () => {
   describe("books in basket", () => {
@@ -42,8 +44,9 @@ describe("Basket page", () => {
               ],
               totalPrice: 95.95,
             },
-            effects: {},
-            reducers: { removeBook: mockRemoveBook },
+            effects: {
+              removeBook: mockRemoveBook,
+            },
           },
           search: {
             state: {},
@@ -55,7 +58,7 @@ describe("Basket page", () => {
       render(
         <Provider store={store}>
           <BrowserRouter>
-            <Basket removeBook={mockRemoveBook} />
+            <Basket />
           </BrowserRouter>
         </Provider>
       );
@@ -89,6 +92,7 @@ describe("Basket page", () => {
       expect(mockRemoveBook).toHaveBeenCalledTimes(1);
     });
   });
+
   describe("basket is empty", () => {
     let store;
     let findByText;
@@ -120,6 +124,42 @@ describe("Basket page", () => {
     it("Given I have nothing in my basket when I navigate to checkout page then my basket should be empty and total is zero", async () => {
       const totalPrice = await screen.findByText("Your basket is empty");
       expect(totalPrice).toBeVisible();
+    });
+  });
+
+  describe("discounts", () => {
+    describe("friday 25% off discount", () => {
+      const date = MockDate.set("2000-11-22");
+      let store;
+      let findByText;
+      beforeEach(async () => {
+        store = init({
+          models: {
+            basket: {
+              state: {
+                books: [],
+                totalPrice: 0,
+              },
+              effects: {},
+            },
+            search: {
+              state: {},
+              effects: {},
+            },
+          },
+        });
+
+        render(
+          <Provider store={store}>
+            <BrowserRouter>
+              <Basket />
+            </BrowserRouter>
+          </Provider>
+        );
+      });
+      it("Given I add The Bench to the basket on Fridays then the book should be discounted by 25% ", () => {
+        //
+      });
     });
   });
 });

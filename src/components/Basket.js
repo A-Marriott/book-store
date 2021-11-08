@@ -1,43 +1,59 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-const Basket = ({ books, totalPrice, removeBook }) => {
-  // useEffect(() => {
-  //   applyDiscount();
-  // }, [applyDiscount]);
-
+const Basket = ({ books, totalPrice, removeBook, addVoucherCode }) => {
+  const [voucher, setVoucher] = useState("");
   return (
     <>
-      {books.length === 0 ? (
-        <p>Your basket is empty</p>
-      ) : (
-        <div>
-          <h1>Total price: {totalPrice}</h1>
-          <br />
-          {books.map((book, index) => {
-            const {
-              volumeInfo: { title: name } = {},
-              saleInfo: { retailPrice: { amount, currencyCode } = {} } = {},
-            } = book;
-            return (
-              <div key={index}>
-                <h4>Title: {name}</h4>
-                <p>
-                  Price: {amount} {currencyCode}
-                </p>
-                <button
-                  onClick={() => {
-                    removeBook(book);
-                  }}
-                  data-testid={`remove-book-button-${index}`}
-                >
-                  Remove from basket
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <>
+        <p>Add voucher</p>
+        <form
+          onSubmit={(formSubmit) => {
+            formSubmit.preventDefault();
+            addVoucherCode(voucher);
+            setVoucher("");
+          }}
+        >
+          <input
+            type="text"
+            value={voucher}
+            onChange={(input) => setVoucher(input.target.value)}
+          />
+          <input type="submit" />
+        </form>
+      </>
+      <>
+        {books.length === 0 ? (
+          <p>Your basket is empty</p>
+        ) : (
+          <div>
+            <h1>Total price: {totalPrice}</h1>
+            <br />
+            {books.map((book, index) => {
+              const {
+                volumeInfo: { title: name } = {},
+                saleInfo: { retailPrice: { amount, currencyCode } = {} } = {},
+              } = book;
+              return (
+                <div key={index}>
+                  <h4>Title: {name}</h4>
+                  <p>
+                    Price: {amount} {currencyCode}
+                  </p>
+                  <button
+                    onClick={() => {
+                      removeBook(book);
+                    }}
+                    data-testid={`remove-book-button-${index}`}
+                  >
+                    Remove from basket
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </>
     </>
   );
 };
@@ -49,7 +65,7 @@ const mapState = (state) => ({
 
 const mapDispatch = (dispatch) => ({
   removeBook: dispatch.basket.removeBook,
-  // applyDiscount: dispatch.basket.applyDiscount,
+  addVoucherCode: dispatch.basket.addVoucherCode,
 });
 
 export default connect(mapState, mapDispatch)(Basket);
