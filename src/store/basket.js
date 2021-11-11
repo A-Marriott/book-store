@@ -1,7 +1,27 @@
+// Additional scenarios....
+// - Multiple voucher codes with specific discounts and expiry dates
+
+
+const discountCodes = [
+  {
+    code: "BLACKFRIDAY",
+    discount: 0.25,
+    expiryDate
+  },
+  {
+    code: "XMASOFF",
+    discount: 0.25,
+    expiryDate
+  }
+]
+
+// Consider mapping the service response to own book object to make it easier
+
 const calculateTotal = (books) => {
   if (books.length === 0) {
     return 0;
   }
+  // Below 2 lines can be combined.... A reduce essentially maps through
   const bookPrices = books.map((book) => {
     return book.saleInfo.retailPrice.amount;
   });
@@ -14,9 +34,13 @@ const calculateDiscountedTotal = (books, voucher) => {
   if (books.length === 0) {
     return 0;
   }
+
+  const isFriday = date.getDay() === 5;
+
   const date = new Date();
   const bookPrices = books.map((book) => {
-    if (book.id === "59UqEAAAQBAJ" && date.getDay() === 5) {
+    // Make book ID constant - magic string, make getDay condition a constant for readability.
+    if (book.id === "59UqEAAAQBAJ" && isFriday) {
       return book.saleInfo.retailPrice.amount * 0.75;
     }
     return book.saleInfo.retailPrice.amount;
@@ -28,6 +52,7 @@ const calculateDiscountedTotal = (books, voucher) => {
 };
 
 const removeBookFromBasket = (books, book) => {
+  // Use filter function to remove book
   const idOfBooks = books.map((b) => b.id);
   const index = idOfBooks.indexOf(book.id);
   let newBooks = books;
@@ -71,6 +96,7 @@ export const basket = {
   },
   reducers: {
     addVoucherCode(state, payload) {
+      // Consider using voucherErrorMessage so FE doesn't need logic it simply displays error...
       const isExpired = expiredVoucher(payload);
       const isInvalid = invalidVoucher(payload);
       return {
